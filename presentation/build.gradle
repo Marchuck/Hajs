@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
+
+def ext = rootProject.extensions.getByName("ext")
 
 android {
     compileSdkVersion 28
@@ -13,6 +16,30 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    sourceSets.each {
+        it.java.srcDirs += "src/$it.name/kotlin"
+    }
+
+    testOptions {
+
+        junitPlatform {
+            filters {
+                engines {
+                    include 'spek'
+                    include 'junit-vintage'
+                }
+            }
+        }
+
+        unitTests.returnDefaultValues = true
+
+        unitTests.all {
+            // All the usual Gradle options.
+            jvmArgs '-XX:MaxPermSize=256m'
+        }
+    }
+
+
     buildTypes {
         debug{
 
@@ -56,4 +83,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     kapt "com.android.databinding:compiler:$gradlePluginVersion"
+
+    testImplementation ext["kotlinTestDependencies"].values()
+
 }

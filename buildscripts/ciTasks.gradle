@@ -30,11 +30,11 @@ def createUnitAndInstrumentedTestsTask(module, buildType, flavor) {
 
     def task = project.task("execute${variant}Tests")
             .dependsOn([
-            "clean",
-            ":${module}:lint${variant}",
-            ":${module}:test${variant}UnitTest",
-            ":${module}:assemble${capitalizedFlavor}",
-            ":${module}:connected${variant}AndroidTest"
+            "clean"
+            , ":${module}:lint${variant}"
+            , ":${module}:test${variant}UnitTest"
+            , ":${module}:assemble${capitalizedFlavor}"
+//            , ":${module}:connected${variant}AndroidTest"
     ])
     task.setGroup(customTasksGroup)
     task.setDescription("Executes lint, assemble, unit an instrumented tests for ${variant} variant")
