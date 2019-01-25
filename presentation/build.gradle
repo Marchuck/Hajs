@@ -24,8 +24,15 @@ android {
     }
     flavorDimensions "default"
     productFlavors {
-        mock {
-            applicationIdSuffix = ".mock"
+        dev {
+            versionNameSuffix "-dev"
+            applicationIdSuffix = ".dev"
+            dimension "default"
+
+        }
+        qa {
+            versionNameSuffix "-qa"
+            applicationIdSuffix = ".qa"
             dimension "default"
         }
         prod {

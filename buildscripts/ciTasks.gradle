@@ -1,0 +1,41 @@
+/**
+ * usage: on CI environment, instead of "./gradlew test assembleDebug lint etc.",
+ * we can focus on single flavor and type
+ * "./gradlew createHexRelatedTasks executeQaDebugTests etc."
+ */
+
+task createHajsRelatedTasks() {
+    description "Create ${customTasksGroup} tasks for given variant"
+    group customTasksGroup
+
+    def buildTypes = ["debug", "release"]
+    def flavors = ["dev", "qa", "prod"]
+    def module = "presentation"
+
+    for (int buildTypeIndex = 0; buildTypeIndex < buildTypes.size(); buildTypeIndex++) {
+        def buildType = buildTypes.get(buildTypeIndex)
+
+        for (int flavorIndex = 0; flavorIndex < flavors.size(); flavorIndex++) {
+            def flavor = flavors.get(flavorIndex)
+
+            createUnitAndInstrumentedTestsTask(module, buildType, flavor)
+        }
+    }
+}
+
+def createUnitAndInstrumentedTestsTask(module, buildType, flavor) {
+    def capitalizedBuildType = buildType.capitalize()
+    def capitalizedFlavor = flavor.capitalize()
+    def variant = "${capitalizedFlavor}${capitalizedBuildType}"
+
+    def task = project.task("execute${variant}Tests")
+            .dependsOn([
+            "clean",
+            ":${module}:lint${variant}",
+            ":${module}:test${variant}UnitTest",
+            ":${module}:assemble${capitalizedFlavor}",
+            ":${module}:connected${variant}AndroidTest"
+    ])
+    task.setGroup(customTasksGroup)
+    task.setDescription("Executes lint, assemble, unit an instrumented tests for ${variant} variant")
+}
